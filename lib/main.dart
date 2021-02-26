@@ -1,4 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+List<String> answers = [
+  'Auf jeden Fall!',
+  'Keineswegs.',
+  'Frag ein ander Mal.',
+  'Kann ich gerade nicht beantworten...',
+  'So wurde es entschieden.',
+  'Definitiv nicht!'
+];
 
 void main() {
   runApp(MyApp());
@@ -8,58 +19,69 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Magische Miesmuschel',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MagischeMiesmuschel(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class MagischeMiesmuschel extends StatefulWidget {
+  final Random random = Random(DateTime.now().millisecondsSinceEpoch);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MagischeMiesmuschelState createState() => _MagischeMiesmuschelState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MagischeMiesmuschelState extends State<MagischeMiesmuschel> {
+  String answer = '';
 
-  void _incrementCounter() {
+  void updateAnswer() async {
+    String newAnswer = answers[widget.random.nextInt(answers.length)];
+
     setState(() {
-      _counter++;
+      answer = '...';
     });
+
+    await Future.delayed(
+      Duration(milliseconds: 800),
+      () => {
+        setState(() {
+          answer = newAnswer;
+        })
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Magische Miesmuschel'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/magische_miesmuschel.png'),
+              Text(answer, style: Theme.of(context).textTheme.headline4),
+              SizedBox(height: 12.0),
+              RaisedButton(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 22.0),
+                child: Text(
+                  'Fragen',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                onPressed: updateAnswer,
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
